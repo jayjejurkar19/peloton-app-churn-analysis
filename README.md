@@ -71,6 +71,10 @@ MySQL was used to perform exploratory analysis and answer business questions rel
 13. How does churn rate differ by plan type within similar tenure groups?
 14. What are the most common cancellation reasons among churned customers?
 15. Which cancellation reasons are most common for each subscription tier?
+16. How does each customer's monthly workout activity compare with the previous month?
+17. What is the workout trend for each customer across their subscription period?
+18: Which customers have the highest total workout activity?
+
 
 ---
 
