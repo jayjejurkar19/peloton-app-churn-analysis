@@ -1,60 +1,55 @@
 # Peloton App Churn Analysis
 
-## 📌 Project Overview
+## 📊 Project Overview
 
-This project analyzes customer churn for the Peloton App using subscription and monthly usage data.
+This project analyzes **Peloton App customer subscription and monthly usage data** to identify customer churn patterns, understand customer engagement, and identify potential retention opportunities.
 
-The objective is to identify customer segments associated with higher churn, understand how customer engagement relates to churn, analyze cancellation reasons, and provide actionable recommendations for improving customer retention.
+The analysis focuses on:
 
-The project workflow was:
+* Overall customer churn
+* Churn across subscription plans and tiers
+* Acquisition channel performance
+* Device and age-group churn
+* Customer tenure and early-stage churn
+* Workout activity and customer engagement
+* Support ticket activity
+* Cancellation reasons
+* First-month engagement
+* Potential high-risk customer segments
+* Revenue at risk
+
+The project was completed using the following workflow:
 
 **Excel → MySQL → Power BI**
 
 ---
 
-## 🎯 Business Objectives
+## 🛠️ Tools Used
 
-* Measure overall customer churn.
-* Compare churn across subscription plans and tiers.
-* Analyze churn across acquisition channels, devices, and age groups.
-* Understand the relationship between customer engagement and churn.
-* Analyze first-month engagement.
-* Identify common cancellation reasons.
-* Identify potential customer segments for retention initiatives.
-* Build an interactive Power BI dashboard for business users.
+* **Excel** – Data cleaning, formatting, filtering, validation, and initial analysis
+* **MySQL** – Exploratory data analysis, joins, aggregations, CTEs, subqueries, and window functions
+* **Power BI** – Data modeling, DAX measures, KPIs, interactive dashboard, and data visualization
+* **GitHub** – Project documentation and version control
 
 ---
 
-# 🛠️ Tools Used
+## 📗 Excel – Data Cleaning & Preparation
 
-* **Microsoft Excel** — Data cleaning, formatting, and initial analysis
-* **MySQL** — SQL-based exploratory data analysis
-* **Power BI** — Interactive dashboard and visualization
-* **GitHub** — Project documentation and version control
-
----
-
-# 📊 Excel — Data Cleaning & Preparation
-
-Excel was used for **data cleaning, formatting, and initial data analysis** before importing the data into MySQL and Power BI.
+Excel was used for data cleaning, formatting, validation, and initial exploration before importing the data into MySQL and Power BI.
 
 ### Data Cleaning & Preparation
 
-The following steps were performed:
-
-* **Removed duplicate records** to avoid duplicate entries in the analysis.
-* **Used Excel filters** to review and examine individual categories and identify category-level patterns.
-* **Standardized date formatting** by changing dates from Long Date format to **Short Date format (`DD-MM-YYYY`)**.
-* **Reviewed the dataset for consistency** before using it for SQL analysis and Power BI visualization.
-* **Checked categorical fields** such as plan type, plan tier, device, age group, and acquisition channel for consistency.
+* Removed **duplicate records** to avoid duplicate entries in the analysis.
+* Used **Excel Filters** to review individual categories and identify category-level patterns.
+* Standardized date formatting by converting dates into **DD-MM-YYYY** format.
+* Reviewed the dataset for consistency before SQL analysis and Power BI development.
+* Checked categorical fields such as **plan type, plan tier, device, age group, and acquisition channel** for consistency.
 
 ---
 
-# 🗄️ MySQL — Exploratory Data Analysis
+## 🎯 Business Questions
 
-MySQL was used to perform exploratory analysis and answer business questions related to customer churn.
-
-### SQL Analysis Questions
+The analysis focuses on questions such as:
 
 1. How many total customers are there, and how many have churned?
 2. What is the overall customer churn rate?
@@ -73,266 +68,241 @@ MySQL was used to perform exploratory analysis and answer business questions rel
 15. Which cancellation reasons are most common for each subscription tier?
 16. How does each customer's monthly workout activity compare with the previous month?
 17. What is the workout trend for each customer across their subscription period?
-18: Which customers have the highest total workout activity?
-
-
----
-
-# 📈 Power BI Dashboard
-
-The Power BI report contains **two dashboard pages**.
-
-## Page 1 — Churn Breakdown & Demographics
-
-### KPI Cards
-
-* Total Customers
-* Churned Customers
-* Churn Rate
-* Revenue at Risk
-
-### Slicers
-
-* Plan Type and Plan Tier
-* Primary Device
-* Age Group
-* Tenure Band
-* Clear All Slicers
-
-### Charts
-
-* Churn Rate by Plan Tier
-* Churn Rate by Plan Type
-* Churn Rate by Age Group
-* Churn Rate by Tenure Band
-* Churn Rate by Primary Device
+18. Which customers have the highest total workout activity?
 
 ---
 
-## Page 2 — Behavioral & Engagement Churn Analysis
+# 📈 Key Insights
 
-### KPI Cards
+## Overall Churn
 
-* Total Workouts
-* Average Workouts
-* Average Active Minutes
-* Average Support Tickets
+The dashboard analyzes approximately **4K customers**, of which approximately **2K customers have churned**.
 
-### Slicers
+Key overall metrics:
 
-* Plan Type and Plan Tier
-* Primary Device
-* Age Group
-* Tenure Band
-* Clear All Slicers
+* **Total Customers:** 4K
+* **Churned Customers:** 2K
+* **Churn Rate:** 42%
+* **Revenue at Risk:** $30.82K
 
-### Charts
-
-* Churned Customers by Cancel Reason
-* Sum of Classes Booked by Churn
-* Average Active Minutes by Churn
-* Average Workouts by Churn
-* Average Support Tickets by Churn
+This indicates a significant customer-retention challenge and provides a baseline for analyzing the segments associated with higher churn.
 
 ---
 
-# 🧮 Power BI DAX Measures
+## Subscription Plan
 
-The dashboard uses DAX measures and calculated columns to create the KPIs and segmentation used throughout the report.
+Monthly subscribers represented **65.99% of churned customers**, compared with **34.01% for annual subscribers**.
 
-```text
-Total Customers =
-DISTINCTCOUNT('subscription'[customer_id])
+This makes subscription plan type an important segmentation variable for further churn analysis.
 
-Churned Customers =
-CALCULATE(
-DISTINCTCOUNT('subscription'[customer_id]),
-'subscription'[churned] = "yes"
-)
-
-Churn Rate =
-DIVIDE(
-[Churned Customers],
-[Total Customers]
-)
-
-Revenue at Risk =
-CALCULATE(
-SUM('subscription'[monthly_price]),
-'subscription'[churned] = "yes"
-)
-
-Average Workouts =
-AVERAGE('usage'[workouts_completed])
-
-Average Active Minutes =
-AVERAGE('usage'[minutes_active])
-
-Average Support Tickets =
-AVERAGE('usage'[support_tickets])
-
-Total Workouts =
-SUM('usage'[workouts_completed])
-```
-
-### Tenure Calculation
-
-```text
-Tenure Months =
-DATEDIFF(
-'subscription'[signup_date],
-IF(
-'subscription'[churned] = "yes",
-'subscription'[churn_date],
-DATE(2025,12,31)
-),
-MONTH
-)
-```
-
-### Tenure Band
-
-```text
-Tenure Band =
-SWITCH(
-TRUE(),
-'subscription'[Tenure Months] <= 1, "0-1 months",
-'subscription'[Tenure Months] <= 3, "2-3 months",
-'subscription'[Tenure Months] <= 6, "4-6 months",
-'subscription'[Tenure Months] <= 12, "7-12 months",
-"12+ months"
-)
-```
-
-### Usage Tenure
-
-```text
-Months Since Signup =
-DATEDIFF(
-RELATED('subscription'[signup_date]),
-'usage'[month],
-MONTH
-)
-
-First Month =
-IF(
-'usage'[Months Since Signup] = 0,
-"First Month",
-"Later Month"
-)
-```
+However, the analysis does not assume that monthly subscriptions directly cause churn. Differences in engagement, acquisition source, tenure, and price sensitivity should also be investigated.
 
 ---
 
-# 🔎 Key Findings
+## Subscription Tier
 
-### Subscription Plan
+Churned customers were relatively evenly distributed across subscription tiers:
 
-Monthly subscribers showed substantially higher churn than annual subscribers, making **plan type one of the strongest segmentation variables** in the analysis.
+* **Premium:** 34.20%
+* **Basic:** 33.12%
+* **Plus:** 32.68%
 
-### Customer Engagement
+This suggests that subscription tier had a smaller difference in churn distribution compared with variables such as plan type and customer engagement.
 
-Lower workout activity was strongly associated with higher churn.
+---
 
-Customers with little or no workout activity showed considerably higher churn than customers with frequent workouts.
+## Customer Tenure
 
-### First-Month Engagement
+Customer tenure showed one of the strongest differences in the analysis.
+
+Customers in the **0–1 month tenure band showed churn approaching 100%**, while churn decreased substantially among customers with longer subscription tenure.
+
+This indicates that **early-stage customer engagement and onboarding are important areas for retention analysis**.
+
+---
+
+## Customer Engagement
+
+Customer workout activity showed a strong association with churn.
+
+Non-churned customers accounted for approximately:
+
+* **60.53% of the active-minute distribution**
+* **60.30% of the workout distribution**
+
+The dashboard also showed approximately:
+
+* **75 classes booked by non-churned customers**
+* **10 classes booked by churned customers**
+
+This indicates that customers who remain active generally demonstrate higher product engagement than customers who churn.
+
+---
+
+## First-Month Engagement
 
 Customers who eventually churned showed lower engagement during their early subscription period.
 
-This indicates that **early engagement can be monitored as a potential retention signal**.
+This suggests that **first-month activity can potentially be used as an early retention signal**.
 
-### Acquisition Channel
-
-Promo-offer customers showed relatively high churn, while referral customers showed lower observed churn.
-
-This suggests that acquisition source can be useful when evaluating customer retention patterns.
-
-### Cancellation Reasons
-
-`not_using_enough` was one of the most common cancellation reasons.
-
-This aligns with the engagement analysis, where lower product usage was associated with higher churn.
-
-### Device and Age
-
-Churn differences across age groups were relatively small.
-
-Android users showed somewhat higher churn than iOS and web users, although the difference was not as large as the differences observed for plan type and engagement.
+Customers showing little or no activity during their first month could therefore be considered for targeted engagement initiatives.
 
 ---
 
-# 💡 Business Recommendations
+## Support Ticket Activity
+
+Churned customers represented approximately **76.07% of the support-ticket distribution**.
+
+This suggests a strong association between support activity and churn and may indicate that customers experiencing greater product or service friction are more likely to leave.
+
+Further investigation would be required to determine whether support issues directly contribute to churn.
+
+---
+
+## Cancellation Reasons
+
+`not_using_enough` was the leading cancellation reason, followed by:
+
+* `found_alternative`
+* `technical_issues`
+
+The `not_using_enough` finding is consistent with the engagement analysis, where lower workout activity was associated with higher churn.
+
+---
+
+## Acquisition Channel
+
+Customers acquired through **promotional offers showed relatively high churn**, while referral customers showed lower observed churn.
+
+This suggests that acquisition source can be useful when evaluating customer retention patterns.
+
+Promotional customers may require additional post-signup engagement and onboarding analysis.
+
+---
+
+## Device Performance
+
+Android users showed slightly higher churn at approximately **45%**, compared with approximately **40% for iOS and Web users**.
+
+Although this difference exists, it is smaller than the differences observed for tenure, subscription plan, and customer engagement.
+
+---
+
+## Age Group
+
+Churn remained relatively consistent across age groups, generally ranging between approximately **40% and 42%**.
+
+This suggests that age group was not one of the strongest differentiating variables in this analysis.
+
+---
+
+# 💡 Business Recommendations & Action Plan
 
 ## 1. Improve Early Customer Engagement
 
-Create an onboarding and engagement program for customers showing little or no activity during their first month.
+**Finding:** Customers in the 0–1 month tenure band showed the highest churn, while customers who eventually churned also showed lower early engagement.
 
-Possible actions:
+**Actions:**
 
-* Personalized workout recommendations
-* Beginner workout plans
-* Onboarding reminders
-* Progress notifications
-* Personalized class recommendations
+* Create personalized onboarding journeys.
+* Recommend beginner-friendly workouts.
+* Send onboarding reminders.
+* Provide progress notifications.
+* Recommend relevant classes based on customer preferences.
+* Monitor first-month workout activity.
 
-**Goal:** Increase early engagement before customers become inactive.
+**Business Impact:** Increasing early product engagement may help identify and support customers before they become inactive.
 
 ---
 
 ## 2. Create a Low-Activity Retention Segment
 
-Customers with very low workout activity can be identified as a potential high-risk group.
+**Finding:** Lower workout activity was associated with higher churn, while non-churned customers showed substantially higher workout and class activity.
 
-A simple retention workflow could be:
+**Actions:**
+
+* Identify customers with very low workout activity.
+* Monitor declining activity.
+* Create targeted engagement campaigns.
+* Recommend personalized workouts.
+* Measure retention after intervention.
+
+**Retention Workflow:**
 
 **Low activity → Identify customer → Targeted engagement → Measure retention**
 
-The effectiveness of these interventions should be tested rather than assumed.
+**Business Impact:** Early identification of inactive customers can provide an opportunity for targeted retention efforts.
 
 ---
 
 ## 3. Investigate Monthly Subscriber Churn
 
-Monthly subscribers show substantially higher churn than annual subscribers.
+**Finding:** Monthly subscribers represented **65.99% of churned customers**, compared with 34.01% for annual subscribers.
 
-Instead of assuming that the subscription type itself causes churn, Peloton should investigate the underlying differences between monthly and annual customers.
+**Actions:**
 
-Areas to investigate include:
+* Compare engagement between monthly and annual customers.
+* Analyze acquisition channels by plan type.
+* Compare customer tenure.
+* Investigate price sensitivity.
+* Compare first-month workout activity.
+* Monitor monthly subscriber retention.
 
-* Engagement
-* Acquisition source
-* Customer tenure
-* Price sensitivity
-* First-month activity
+**Business Impact:** Understanding the underlying reasons for the difference can help improve retention strategies without assuming that subscription type itself causes churn.
 
 ---
 
 ## 4. Review Promotional Acquisition
 
-Customers acquired through promotional offers showed relatively high churn.
+**Finding:** Customers acquired through promotional offers showed relatively high churn.
 
-Peloton could evaluate whether promotional customers receive sufficient post-signup engagement and onboarding.
+**Actions:**
 
-A useful approach would be to compare:
+* Compare promotional customers with organic and referral customers.
+* Analyze their first-month engagement.
+* Monitor their workout activity.
+* Evaluate post-signup onboarding.
+* Test additional engagement campaigns.
 
-**Promo customers → engagement → retention**
-
-and test whether additional onboarding improves their retention.
+**Business Impact:** Improving post-acquisition engagement may help determine whether promotional customers can be retained more effectively.
 
 ---
 
 ## 5. Address "Not Using Enough"
 
-Since `not_using_enough` is a common cancellation reason and low activity is associated with higher churn, the business should connect cancellation feedback with engagement behavior.
+**Finding:** `not_using_enough` was the leading cancellation reason and lower product usage was associated with higher churn.
 
-Customers showing declining activity could receive targeted interventions before cancellation.
+**Actions:**
+
+* Identify customers with declining workout activity.
+* Monitor customers with zero or very low workouts.
+* Trigger targeted engagement campaigns.
+* Recommend personalized classes.
+* Connect cancellation feedback with usage behavior.
+
+**Business Impact:** Connecting behavioral signals with cancellation reasons can help identify potential churn risks earlier.
 
 ---
 
-## 6. Measure the Impact
+## 6. Monitor Customer Support Friction
 
-The recommendations should be evaluated using measurable KPIs:
+**Finding:** Churned customers represented approximately **76.07% of the support-ticket distribution**.
+
+**Actions:**
+
+* Monitor customers with repeated support tickets.
+* Identify recurring technical issues.
+* Analyze support activity alongside engagement.
+* Investigate whether unresolved issues are associated with cancellation.
+* Track churn among customers who contact support.
+
+**Business Impact:** Identifying and resolving recurring customer issues may reduce friction and improve retention.
+
+---
+
+## 7. Monitor Retention KPIs
+
+The effectiveness of retention initiatives should be measured using KPIs such as:
 
 * Monthly churn rate
 * First-month workout completion
@@ -342,8 +312,248 @@ The recommendations should be evaluated using measurable KPIs:
 * Monthly subscriber retention
 * Retention of targeted customers
 * Cancellation rate
+* Revenue at risk
 
-Where possible, A/B testing should be used to determine whether an intervention actually improves retention.
+Where possible, A/B testing should be used to determine whether retention interventions actually improve customer outcomes.
+
+---
+
+# 📊 Power BI Dashboard
+
+The Power BI report contains **two interactive dashboard pages** covering customer churn, demographics, subscription behavior, and customer engagement.
+
+---
+
+## 📌 Page 1 – Churn Breakdown & Demographics
+
+### Key Performance Indicators (KPIs)
+
+| KPI                   |       Value |
+| --------------------- | ----------: |
+| **Total Customers**   |      **4K** |
+| **Churned Customers** |      **2K** |
+| **Churn Rate**        |     **42%** |
+| **Revenue at Risk**   | **$30.82K** |
+
+### Dashboard Visuals
+
+* **Churn Rate by Plan Tier** – Donut Chart
+* **Churn Rate by Plan Type** – Donut Chart
+* **Churn Rate by Age Group** – Bar Chart
+* **Churn Rate by Tenure Band** – Bar Chart
+* **Churn Rate by Primary Device** – Bar Chart
+
+### Key Visual Findings
+
+**Plan Tier Distribution**
+
+* Premium – 34.20%
+* Basic – 33.12%
+* Plus – 32.68%
+
+**Plan Type Distribution**
+
+* Monthly – 65.99%
+* Annual – 34.01%
+
+**Tenure**
+
+The **0–1 month** tenure band showed churn approaching 100%, with churn decreasing substantially among longer-tenure customers.
+
+**Age Group**
+
+Churn remained relatively stable at approximately 40–42%.
+
+**Device**
+
+* Android – approximately 45%
+* iOS – approximately 40%
+* Web – approximately 40%
+
+---
+
+# 📊 Page 2 – Behavioral & Engagement Churn Analysis
+
+### Key Performance Indicators (KPIs)
+
+| KPI                         |      Value |
+| --------------------------- | ---------: |
+| **Total Workouts**          |    **673** |
+| **Average Workouts**        |   **3.98** |
+| **Average Active Minutes**  | **119.43** |
+| **Average Support Tickets** |   **0.13** |
+
+### Dashboard Visuals
+
+* **Churned Customers by Cancellation Reason** – Bar Chart
+* **Sum of Classes Booked by Churn** – Column Chart
+* **Average Active Minutes by Churn** – Donut Chart
+* **Average Workouts by Churn** – Donut Chart
+* **Average Support Tickets by Churn** – Donut Chart
+
+### Key Visual Findings
+
+**Cancellation Reasons**
+
+`not_using_enough` was the leading cancellation reason, followed by `found_alternative` and `technical_issues`.
+
+**Classes Booked**
+
+* Non-churned customers – approximately 75 classes
+* Churned customers – approximately 10 classes
+
+**Active Minutes**
+
+Non-churned customers represented **60.53%** of the active-minute distribution.
+
+**Workouts**
+
+Non-churned customers represented **60.30%** of the workout distribution.
+
+**Support Tickets**
+
+Churned customers represented **76.07%** of the support-ticket distribution.
+
+---
+
+## 🎛️ Dashboard Slicers
+
+The dashboard includes interactive filters for:
+
+* **Plan Type & Plan Tier**
+* **Primary Device**
+* **Age Group**
+* **Tenure Band**
+
+A **Clear All Slicers** button is also included to quickly reset dashboard filters.
+
+---
+
+# 🧮 DAX Measures
+
+The dashboard uses DAX measures and calculated columns to create KPIs, customer segmentation, and tenure analysis.
+
+## Total Customers
+
+```dax
+total customers =
+distinctcount('subscription'[customer_id])
+```
+
+## Churned Customers
+
+```dax
+churned customers =
+calculate(
+distinctcount('subscription'[customer_id]),
+'subscription'[churned] = "yes"
+)
+```
+
+## Churn Rate
+
+```dax
+churn rate =
+divide(
+[churned customers],
+[total customers]
+)
+```
+
+## Revenue at Risk
+
+```dax
+revenue at risk =
+calculate(
+sum('subscription'[monthly_price]),
+'subscription'[churned] = "yes"
+)
+```
+
+## Average Workouts
+
+```dax
+average workouts =
+average('usage'[workouts_completed])
+```
+
+## Average Active Minutes
+
+```dax
+average active minutes =
+average('usage'[minutes_active])
+```
+
+## Average Support Tickets
+
+```dax
+average support tickets =
+average('usage'[support_tickets])
+```
+
+## Total Workouts
+
+```dax
+total workouts =
+sum('usage'[workouts_completed])
+```
+
+---
+
+## 📅 Tenure Calculation
+
+```dax
+tenure months =
+datediff(
+'subscription'[signup_date],
+if(
+'subscription'[churned] = "yes",
+'subscription'[churn_date],
+date(2025,12,31)
+),
+month
+)
+```
+
+---
+
+## 📊 Tenure Band
+
+```dax
+tenure band =
+switch(
+true(),
+'subscription'[tenure months] <= 1, "0-1 months",
+'subscription'[tenure months] <= 3, "2-3 months",
+'subscription'[tenure months] <= 6, "4-6 months",
+'subscription'[tenure months] <= 12, "7-12 months",
+"12+ months"
+)
+```
+
+---
+
+## 📅 Usage Tenure
+
+```dax
+months since signup =
+datediff(
+related('subscription'[signup_date]),
+'usage'[month],
+month
+)
+```
+
+## First Month
+
+```dax
+first month =
+if(
+'usage'[months since signup] = 0,
+"First Month",
+"Later Month"
+)
+```
 
 ---
 
@@ -353,33 +563,22 @@ Where possible, A/B testing should be used to determine whether an intervention 
 peloton-app-churn-analysis/
 │
 ├── README.md
+│   └── Project documentation and analysis overview
 │
-├── subscription.csv
-├── usage.csv
+├── peloton-app-churn-analysis eda.sql
+│   └── SQL EDA and business analysis queries
 │
-├── churn_analysis.sql
+├── peloton-cleaned-dataset.xlsx
+│   └── Cleaned Peloton subscription and usage dataset
 │
-└── peloton_churn_dashboard.pbix
+├── peloton-dashboard-page-1.png
+│   └── Power BI dashboard — Churn Overview
+│
+├── peloton-dashboard-page-2.png
+│   └── Power BI dashboard — Engagement & Churn Analysis
+│
+└── peloton-dashboard.pbix
+    └── Power BI churn analysis dashboard
 ```
 
----
 
-# 👤 Skills Demonstrated
-
-* Microsoft Excel
-* Data Cleaning
-* Exploratory Data Analysis
-* MySQL
-* SQL Aggregations
-* CASE Statements
-* JOINs
-* CTEs
-* Subqueries
-* Customer Segmentation
-* Churn Analysis
-* DAX
-* Power BI
-* KPI Development
-* Interactive Dashboard Design
-* Business Analysis
-* Data-Driven Recommendations
