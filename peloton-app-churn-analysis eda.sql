@@ -157,4 +157,26 @@ and cancel_reason != ''
 group by plan_tier, cancel_reason
 order by plan_tier, cancelled_customers desc;
 
+-- question 16: how does each customer's monthly workout activity compare with the previous month?
 
+select customer_id, month, workouts_completed,
+lag(workouts_completed) over(partition by customer_id order by str_to_date(concat(month, '01'), '%m-%Y-%d')) as previous_month_workouts
+from `usage`;
+
+
+-- question 17: what is the workout trend for each customer across their subscription period?
+
+select customer_id, month, workouts_completed,
+sum(workouts_completed) over(partition by customer_id order by str_to_date(concat(month, '-01'), '%m-%Y-%d')) as cumulative_workouts
+from `usage`;
+
+
+-- question 18: which customers have the highest total workout activity?
+
+select customer_id, total_workouts,
+rank() over(order by total_workouts desc) as workout_rank
+from (
+select customer_id, sum(workouts_completed) as total_workouts
+from `usage`
+group by customer_id
+) t;
